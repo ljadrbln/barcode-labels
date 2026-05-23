@@ -123,7 +123,7 @@ def render_label_v02(
 
     pdf.drawCentredString(
         0,
-        0,
+        -5,
         f"{price} грн"
     )
 
@@ -135,7 +135,7 @@ def render_label_v02(
     right_width = inner_width - left_column_width
 
     # Store name
-    pdf.setFont("DejaVu", 8)
+    pdf.setFont("DejaVu", 12)
 
     pdf.drawCentredString(
         right_x + (right_width / 2),
@@ -146,14 +146,14 @@ def render_label_v02(
     # Product text
     product_text = f"{article} {name} {size}"
 
-    pdf.setFont("DejaVu", 12)
+    pdf.setFont("DejaVu", 10)
 
     max_text_width = right_width - (4 * mm)
 
     lines = simpleSplit(
         product_text,
         "DejaVu",
-        12,
+        10,
         max_text_width
     )
 
@@ -165,6 +165,7 @@ def render_label_v02(
         inner_y
         + (inner_height / 2)
         + (block_height / 2)
+        - (3 * mm)
     )
 
     for index, line in enumerate(lines):
