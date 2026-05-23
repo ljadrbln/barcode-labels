@@ -6,6 +6,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from src.barcode_generator import generate_ean13_barcode
 from src.barcode_storage import get_or_create_barcode
+from src.excel_reader import read_products
 
 LABEL_WIDTH = 58 * mm
 LABEL_HEIGHT = 40 * mm
@@ -239,16 +240,22 @@ def main():
         )
     )
 
-    render_label_v02(
-        pdf,
-        article,
-        name,
-        size,
-        price,
-        barcode_value
+    products = read_products(
+        "input/demo_products.xlsx"
     )
 
-    pdf.save()
+    print(products)
+
+    # render_label_v02(
+    #     pdf,
+    #     article,
+    #     name,
+    #     size,
+    #     price,
+    #     barcode_value
+    # )
+
+    # pdf.save()
 
     print("Done")
 
