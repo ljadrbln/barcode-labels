@@ -5,6 +5,7 @@ from reportlab.graphics.barcode import createBarcodeDrawing
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from src.barcode_generator import generate_ean13_barcode
+from src.barcode_storage import get_or_create_barcode
 
 LABEL_WIDTH = 58 * mm
 LABEL_HEIGHT = 40 * mm
@@ -213,7 +214,11 @@ def main():
     size = "40(p)"
     price = "9790"
     # barcode_value = "2966150061736"
-    barcode_value = generate_ean13_barcode()
+    # barcode_value = generate_ean13_barcode()
+    barcode_value = get_or_create_barcode(
+        article,
+        size
+    )
 
     pdf = canvas.Canvas("label.pdf")
 
