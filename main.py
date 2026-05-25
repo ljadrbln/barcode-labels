@@ -17,6 +17,8 @@ def main():
     input_filepath = args.input
     output_filepath = args.output
 
+    store_line = "COSMO"
+
     register_fonts()
 
     products = read_products(input_filepath)
@@ -32,6 +34,10 @@ def main():
         name = str(product["name"])
         size = str(product["size"])
         price = str(product["price"])
+        currency = product.get("currency") or ""
+
+        price_line = f"{price} {currency}".strip()
+        item_line = f"{article} {name} {size}"
 
         barcode_value = get_or_create_barcode(article, size)
 
@@ -40,10 +46,9 @@ def main():
 
         render_label_v02(
             pdf,
-            article,
-            name,
-            size,
-            price,
+            store_line,
+            item_line,
+            price_line,
             barcode_value
         )
 

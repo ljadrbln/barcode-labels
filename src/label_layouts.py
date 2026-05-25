@@ -76,10 +76,9 @@ def render_label_v01(
 
 def render_label_v02(
     pdf,
-    article,
-    name,
-    size,
-    price,
+    store_line,
+    item_line,
+    price_line,
     barcode_value
 ):
     margin = 2 * mm
@@ -101,7 +100,6 @@ def render_label_v02(
     )
 
     # LEFT COLUMN
-    # Vertical price
     pdf.saveState()
 
     pdf.setFont("DejaVu", 16)
@@ -109,23 +107,18 @@ def render_label_v02(
     price_x = inner_x + (left_column_width / 2)
     price_y = inner_y + (inner_height / 2)
 
-    pdf.translate(
-        price_x,
-        price_y
-    )
-
+    pdf.translate(price_x, price_y)
     pdf.rotate(90)
 
     pdf.drawCentredString(
         0,
         -5,
-        f"{price} грн"
+        price_line
     )
 
     pdf.restoreState()
 
     # RIGHT COLUMN
-
     right_x = inner_x + left_column_width
     right_width = inner_width - left_column_width
 
@@ -135,25 +128,22 @@ def render_label_v02(
     pdf.drawCentredString(
         right_x + (right_width / 2),
         inner_y + inner_height - (5 * mm),
-        "COSMO"
+        store_line
     )
 
-    # Product text
-    product_text = f"{article} {name} {size}"
-
+    # Item text
     pdf.setFont("DejaVu", 10)
 
     max_text_width = right_width - (4 * mm)
 
     lines = simpleSplit(
-        product_text,
+        item_line,
         "DejaVu",
         10,
         max_text_width
     )
 
     line_height = 5 * mm
-
     block_height = len(lines) * line_height
 
     start_y = (
@@ -171,20 +161,10 @@ def render_label_v02(
             y,
             line
         )
-        
-    # product_text = f"{article} {name} {size}"
-
-    # pdf.setFont("DejaVu", 12)
-
-    # pdf.drawCentredString(
-    #     right_x + (right_width / 2),
-    #     inner_y + (inner_height / 2),
-    #     product_text
-    # )
 
     # Barcode
     barcode = createBarcodeDrawing(
-        'EAN13',
+        "EAN13",
         value=barcode_value,
         barHeight=8 * mm,
         humanReadable=True
