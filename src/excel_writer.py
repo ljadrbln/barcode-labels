@@ -24,7 +24,7 @@ def write_products_with_barcodes(
     article_column_index = headers.index(article_column_name) + 1
     size_column_index = headers.index(size_column_name) + 1
 
-    barcode_column_name = "barcode"
+    barcode_column_name = column_mapping.get("barcode") or "barcode"
     barcode_column_index = len(headers) + 1
 
     if barcode_column_name in headers:
