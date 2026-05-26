@@ -9,7 +9,7 @@ from src.label_layouts import LABEL_WIDTH
 from src.label_layouts import LABEL_HEIGHT
 from src.label_layouts import render_label_v02
 from src.output_paths import build_pdf_path
-
+from src.config_loader import load_column_mapping
 
 def main():
     args = parse_args()
@@ -21,7 +21,8 @@ def main():
 
     register_fonts()
 
-    products = read_products(input_filepath)
+    column_mapping = load_column_mapping()
+    products = read_products(input_filepath, column_mapping)
     pdf_path = build_pdf_path(output_filepath)
 
     pdf = canvas.Canvas(str(pdf_path))
@@ -59,7 +60,8 @@ def main():
     write_products_with_barcodes(
         input_filepath,
         output_filepath,
-        barcodes
+        barcodes,
+        column_mapping
     )
 
     print("Done")

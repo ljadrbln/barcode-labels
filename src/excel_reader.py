@@ -1,6 +1,10 @@
 from openpyxl import load_workbook
 
-def read_products(filepath):
+
+def read_products(
+    filepath,
+    column_mapping
+):
     workbook = load_workbook(filepath)
 
     sheet = workbook.active
@@ -11,15 +15,23 @@ def read_products(filepath):
 
     headers = rows[0]
 
+    header_indexes = {}
+
+    for internal_name, excel_column_name in column_mapping.items():
+        if excel_column_name not in headers:
+            continue
+
+        header_indexes[internal_name] = headers.index(
+            excel_column_name
+        )
+
     result = []
 
     for row in rows[1:]:
         item = {}
 
-        for index, value in enumerate(row):
-            key = headers[index]
-
-            item[key] = value
+        for internal_name, index in header_indexes.items():
+            item[internal_name] = row[index]
 
         result.append(item)
 
