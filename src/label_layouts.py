@@ -6,6 +6,20 @@ from reportlab.graphics.barcode import createBarcodeDrawing
 LABEL_WIDTH = 58 * mm
 LABEL_HEIGHT = 40 * mm
 
+FONT_FAMILY = "DejaVu"
+
+STORE_FONT_SIZE = 12
+ITEM_FONT_SIZE = 10
+PRICE_FONT_SIZE = 16
+
+ITEM_LINE_HEIGHT = 5 * mm
+
+BARCODE_WIDTH = 32 * mm
+BARCODE_HEIGHT = 8 * mm
+
+LAYOUT_MARGIN = 2 * mm
+LEFT_COLUMN_WIDTH = 10 * mm
+
 
 def render_label_58x40_vertical_price(
     pdf,
@@ -21,25 +35,20 @@ def render_label_58x40_vertical_price(
 
 
 def build_layout():
-    margin = 2 * mm
+    inner_x = LAYOUT_MARGIN
+    inner_y = LAYOUT_MARGIN
 
-    inner_x = margin
-    inner_y = margin
+    inner_width = LABEL_WIDTH - (LAYOUT_MARGIN * 2)
+    inner_height = LABEL_HEIGHT - (LAYOUT_MARGIN * 2)
 
-    inner_width = LABEL_WIDTH - (margin * 2)
-    inner_height = LABEL_HEIGHT - (margin * 2)
-
-    left_column_width = 10 * mm
-
-    right_x = inner_x + left_column_width
-    right_width = inner_width - left_column_width
+    right_x = inner_x + LEFT_COLUMN_WIDTH
+    right_width = inner_width - LEFT_COLUMN_WIDTH
 
     result = {
         "inner_x": inner_x,
         "inner_y": inner_y,
         "inner_width": inner_width,
         "inner_height": inner_height,
-        "left_column_width": left_column_width,
         "right_x": right_x,
         "right_width": right_width,
     }
@@ -51,7 +60,7 @@ def draw_vertical_separator(
     pdf,
     layout
 ):
-    x = layout["inner_x"] + layout["left_column_width"]
+    x = layout["inner_x"] + LEFT_COLUMN_WIDTH
 
     pdf.line(
         x,
@@ -68,9 +77,12 @@ def draw_vertical_price(
 ):
     pdf.saveState()
 
-    pdf.setFont("DejaVu", 16)
+    pdf.setFont(
+        FONT_FAMILY,
+        PRICE_FONT_SIZE
+    )
 
-    price_x = layout["inner_x"] + (layout["left_column_width"] / 2)
+    price_x = layout["inner_x"] + (LEFT_COLUMN_WIDTH / 2)
     price_y = layout["inner_y"] + (layout["inner_height"] / 2)
 
     pdf.translate(price_x, price_y)
@@ -90,10 +102,18 @@ def draw_store_line(
     layout,
     store_line
 ):
-    pdf.setFont("DejaVu", 12)
+    pdf.setFont(
+        FONT_FAMILY,
+        STORE_FONT_SIZE
+    )
 
     x = layout["right_x"] + (layout["right_width"] / 2)
-    y = layout["inner_y"] + layout["inner_height"] - (5 * mm)
+
+    y = (
+        layout["inner_y"]
+        + layout["inner_height"]
+        - (5 * mm)
+    )
 
     pdf.drawCentredString(
         x,
@@ -107,19 +127,21 @@ def draw_item_line(
     layout,
     item_line
 ):
-    pdf.setFont("DejaVu", 10)
+    pdf.setFont(
+        FONT_FAMILY,
+        ITEM_FONT_SIZE
+    )
 
     max_text_width = layout["right_width"] - (4 * mm)
 
     lines = simpleSplit(
         item_line,
-        "DejaVu",
-        10,
+        FONT_FAMILY,
+        ITEM_FONT_SIZE,
         max_text_width
     )
 
-    line_height = 5 * mm
-    block_height = len(lines) * line_height
+    block_height = len(lines) * ITEM_LINE_HEIGHT
 
     start_y = (
         layout["inner_y"]
@@ -131,7 +153,7 @@ def draw_item_line(
     x = layout["right_x"] + (layout["right_width"] / 2)
 
     for index, line in enumerate(lines):
-        y = start_y - (index * line_height)
+        y = start_y - (index * ITEM_LINE_HEIGHT)
 
         pdf.drawCentredString(
             x,
@@ -148,13 +170,20 @@ def draw_barcode(
     barcode = createBarcodeDrawing(
         "EAN13",
         value=barcode_value,
-        barHeight=8 * mm,
+        barHeight=BARCODE_HEIGHT,
         humanReadable=True
     )
 
-    barcode_width = 32 * mm
+    barcode_x = (
+        layout["right_x"]
+        + (
+            (
+                layout["right_width"]
+                - BARCODE_WIDTH
+            ) / 2
+        )
+    )
 
-    barcode_x = layout["right_x"] + ((layout["right_width"] - barcode_width) / 2)
     barcode_y = layout["inner_y"] + (2 * mm)
 
     barcode.drawOn(
