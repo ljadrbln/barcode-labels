@@ -24,14 +24,14 @@ def build_label_data(product):
     item_line = f"{article} {name} {size}"
 
     barcode_value = get_or_create_barcode(article, size)
-
     product_key = f"{article}:{size}"
 
     result = {
         "product_key": product_key,
-        "barcode_value": barcode_value,
+        "store_line": STORE_LINE,
         "item_line": item_line,
         "price_line": price_line,
+        "barcode_value": barcode_value,
     }
 
     return result
@@ -58,10 +58,7 @@ def render_labels_pdf(
 
         render_label_58x40_vertical_price(
             pdf,
-            STORE_LINE,
-            label_data["item_line"],
-            label_data["price_line"],
-            barcode_value
+            label_data
         )
 
         pdf.showPage()
@@ -69,7 +66,6 @@ def render_labels_pdf(
     pdf.save()
 
     return barcodes
-
 
 def main():
     args = parse_args()

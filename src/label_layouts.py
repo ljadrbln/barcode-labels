@@ -2,16 +2,25 @@ from reportlab.lib.units import mm
 from reportlab.lib.utils import simpleSplit
 from reportlab.graphics.barcode import createBarcodeDrawing
 
+
 LABEL_WIDTH = 58 * mm
 LABEL_HEIGHT = 40 * mm
 
+
 def render_label_58x40_vertical_price(
     pdf,
-    store_line,
-    item_line,
-    price_line,
-    barcode_value
+    label_data
 ):
+    layout = build_layout()
+
+    draw_vertical_separator(pdf, layout)
+    draw_vertical_price(pdf, layout, label_data["price_line"])
+    draw_store_line(pdf, layout, label_data["store_line"])
+    draw_item_line(pdf, layout, label_data["item_line"])
+    draw_barcode(pdf, layout, label_data["barcode_value"])
+
+
+def build_layout():
     margin = 2 * mm
 
     inner_x = margin
@@ -22,21 +31,47 @@ def render_label_58x40_vertical_price(
 
     left_column_width = 10 * mm
 
-    # Vertical separator
+    right_x = inner_x + left_column_width
+    right_width = inner_width - left_column_width
+
+    result = {
+        "inner_x": inner_x,
+        "inner_y": inner_y,
+        "inner_width": inner_width,
+        "inner_height": inner_height,
+        "left_column_width": left_column_width,
+        "right_x": right_x,
+        "right_width": right_width,
+    }
+
+    return result
+
+
+def draw_vertical_separator(
+    pdf,
+    layout
+):
+    x = layout["inner_x"] + layout["left_column_width"]
+
     pdf.line(
-        inner_x + left_column_width,
-        inner_y,
-        inner_x + left_column_width,
-        inner_y + inner_height
+        x,
+        layout["inner_y"],
+        x,
+        layout["inner_y"] + layout["inner_height"]
     )
 
-    # LEFT COLUMN
+
+def draw_vertical_price(
+    pdf,
+    layout,
+    price_line
+):
     pdf.saveState()
 
     pdf.setFont("DejaVu", 16)
 
-    price_x = inner_x + (left_column_width / 2)
-    price_y = inner_y + (inner_height / 2)
+    price_x = layout["inner_x"] + (layout["left_column_width"] / 2)
+    price_y = layout["inner_y"] + (layout["inner_height"] / 2)
 
     pdf.translate(price_x, price_y)
     pdf.rotate(90)
@@ -49,23 +84,32 @@ def render_label_58x40_vertical_price(
 
     pdf.restoreState()
 
-    # RIGHT COLUMN
-    right_x = inner_x + left_column_width
-    right_width = inner_width - left_column_width
 
-    # Store name
+def draw_store_line(
+    pdf,
+    layout,
+    store_line
+):
     pdf.setFont("DejaVu", 12)
 
+    x = layout["right_x"] + (layout["right_width"] / 2)
+    y = layout["inner_y"] + layout["inner_height"] - (5 * mm)
+
     pdf.drawCentredString(
-        right_x + (right_width / 2),
-        inner_y + inner_height - (5 * mm),
+        x,
+        y,
         store_line
     )
 
-    # Item text
+
+def draw_item_line(
+    pdf,
+    layout,
+    item_line
+):
     pdf.setFont("DejaVu", 10)
 
-    max_text_width = right_width - (4 * mm)
+    max_text_width = layout["right_width"] - (4 * mm)
 
     lines = simpleSplit(
         item_line,
@@ -78,22 +122,29 @@ def render_label_58x40_vertical_price(
     block_height = len(lines) * line_height
 
     start_y = (
-        inner_y
-        + (inner_height / 2)
+        layout["inner_y"]
+        + (layout["inner_height"] / 2)
         + (block_height / 2)
         - (3 * mm)
     )
+
+    x = layout["right_x"] + (layout["right_width"] / 2)
 
     for index, line in enumerate(lines):
         y = start_y - (index * line_height)
 
         pdf.drawCentredString(
-            right_x + (right_width / 2),
+            x,
             y,
             line
         )
 
-    # Barcode
+
+def draw_barcode(
+    pdf,
+    layout,
+    barcode_value
+):
     barcode = createBarcodeDrawing(
         "EAN13",
         value=barcode_value,
@@ -103,8 +154,8 @@ def render_label_58x40_vertical_price(
 
     barcode_width = 32 * mm
 
-    barcode_x = right_x + ((right_width - barcode_width) / 2)
-    barcode_y = inner_y + (2 * mm)
+    barcode_x = layout["right_x"] + ((layout["right_width"] - barcode_width) / 2)
+    barcode_y = layout["inner_y"] + (2 * mm)
 
     barcode.drawOn(
         pdf,
