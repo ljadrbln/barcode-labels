@@ -1,8 +1,8 @@
 import argparse
 
+from pathlib import Path
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -23,7 +23,7 @@ def parse_args():
 
 
 def register_fonts():
-    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    font_path = Path("assets/fonts/DejaVuSans.ttf")
 
     pdfmetrics.registerFont(
         TTFont(
