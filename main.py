@@ -3,6 +3,7 @@ from reportlab.pdfgen import canvas
 from src.barcode_storage import get_or_create_barcode
 from src.bootstrap import parse_args
 from src.bootstrap import register_fonts
+from src.config_loader import load_app_config
 from src.config_loader import load_column_mapping
 from src.excel_reader import read_products
 from src.excel_writer import write_products_with_barcodes
@@ -11,9 +12,11 @@ from src.label_layouts import LABEL_HEIGHT
 from src.label_layouts import render_label_58x40_vertical_price
 from src.output_paths import build_pdf_path
 
-STORE_LINE = "COSMO"
 
-def build_label_data(product):
+def build_label_data(
+    product, 
+    store_name
+):
     article = str(product["article"])
     name = str(product["name"])
     size = str(product["size"])
@@ -28,7 +31,7 @@ def build_label_data(product):
 
     result = {
         "product_key": product_key,
-        "store_line": STORE_LINE,
+        "store_line": store_name,
         "item_line": item_line,
         "price_line": price_line,
         "barcode_value": barcode_value,
@@ -38,9 +41,11 @@ def build_label_data(product):
 
 
 def render_labels_pdf(
+    app_config,
     products,
     output_filepath
 ):
+    store_line = app_config["store_name"]
     pdf_path = build_pdf_path(output_filepath)
 
     pdf = canvas.Canvas(str(pdf_path))
@@ -49,7 +54,7 @@ def render_labels_pdf(
     barcodes = {}
 
     for product in products:
-        label_data = build_label_data(product)
+        label_data = build_label_data(product, store_line)
 
         product_key = label_data["product_key"]
         barcode_value = label_data["barcode_value"]
@@ -75,10 +80,12 @@ def main():
 
     register_fonts()
 
+    app_config = load_app_config()
     column_mapping = load_column_mapping()
     products = read_products(input_filepath, column_mapping)
 
     barcodes = render_labels_pdf(
+        app_config,
         products,
         output_filepath
     )
