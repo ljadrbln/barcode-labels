@@ -5,76 +5,7 @@ from reportlab.graphics.barcode import createBarcodeDrawing
 LABEL_WIDTH = 58 * mm
 LABEL_HEIGHT = 40 * mm
 
-def render_label_v01(
-    pdf,
-    article,
-    name,
-    size,
-    price,
-    barcode_value
-):
-    margin = 2 * mm
-
-    # Outer border
-    pdf.roundRect(
-        margin,
-        margin,
-        LABEL_WIDTH - (margin * 2),
-        LABEL_HEIGHT - (margin * 2),
-        2 * mm
-    )
-
-    # Brand
-    pdf.setFont("DejaVu", 8)
-
-    pdf.drawCentredString(
-        LABEL_WIDTH / 2,
-        35 * mm,
-        "COSMO"
-    )
-
-    # Product name
-    pdf.setFont("DejaVu", 16)
-
-    pdf.drawCentredString(
-        LABEL_WIDTH / 2,
-        28 * mm,
-        name
-    )
-
-    # Size
-    pdf.setFont("DejaVu", 14)
-
-    pdf.drawCentredString(
-        LABEL_WIDTH / 2,
-        22 * mm,
-        size
-    )
-
-    # Price
-    pdf.setFont("DejaVu", 22)
-
-    pdf.drawCentredString(
-        LABEL_WIDTH / 2,
-        15 * mm,
-        f"{price} грн"
-    )
-
-    # Barcode
-    barcode = createBarcodeDrawing(
-        'EAN13',
-        value=barcode_value,
-        barHeight=10 * mm,
-        humanReadable=True
-    )
-
-    barcode.drawOn(
-        pdf,
-        7 * mm,
-        2 * mm
-    )
-
-def render_label_v02(
+def render_label_58x40_vertical_price(
     pdf,
     store_line,
     item_line,

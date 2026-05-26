@@ -8,12 +8,10 @@ from src.excel_reader import read_products
 from src.excel_writer import write_products_with_barcodes
 from src.label_layouts import LABEL_WIDTH
 from src.label_layouts import LABEL_HEIGHT
-from src.label_layouts import render_label_v02
+from src.label_layouts import render_label_58x40_vertical_price
 from src.output_paths import build_pdf_path
 
-
 STORE_LINE = "COSMO"
-
 
 def build_label_data(product):
     article = str(product["article"])
@@ -58,7 +56,7 @@ def render_labels_pdf(
 
         barcodes[product_key] = barcode_value
 
-        render_label_v02(
+        render_label_58x40_vertical_price(
             pdf,
             STORE_LINE,
             label_data["item_line"],
