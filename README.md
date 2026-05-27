@@ -43,11 +43,11 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-## Input XLSX format
+## Input XLSX Format
 
-| article | name          | size  | price | currency |
-| ------- | ------------- | ----- | ----- | -------- |
-| 227701  | ICEBERG белый | 40(p) | 290   | грн      |
+| article    | name          | size | price | currency |
+| ---------- | ------------- | ---- | ----- | -------- |
+| 2xx1-BR-37 | Giovanna 2601 | 37   | 199   | USD      |
 
 Actual column names are configurable via:
 
@@ -59,12 +59,12 @@ Example:
 
 ```json
 {
-  "article": "Артикул",
-  "name": "Название",
-  "size": "Размер",
-  "price": "Цена",
-  "currency": "Валюта",
-  "barcode": "Штрихкод"
+  "article": "Article",
+  "name": "Name",
+  "size": "Size",
+  "price": "Price",
+  "currency": "Currency",
+  "barcode": "Barcode"
 }
 ```
 
@@ -112,7 +112,7 @@ output/
 
 ## Label Example
 
-![Label example](./docs/images/label-example.jpg)
+![Label example](docs/images/label-example.jpg)
 
 ## Tests
 
@@ -131,8 +131,13 @@ pytest
   ```
 
 - Runtime files are ignored via `.gitignore`
+
 - PDF label size:
 
   ```text
   58x40 mm
   ```
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0.
