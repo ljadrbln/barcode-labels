@@ -1,13 +1,11 @@
-from pathlib import Path
 import json
+from pathlib import Path
 
 
 CONFIG_DIR = Path("config")
 
 
-def load_json_config(filename):
-    filepath = CONFIG_DIR / filename
-
+def load_json_config(filepath):
     with open(filepath, "r") as file:
         result = json.load(file)
 
@@ -15,16 +13,16 @@ def load_json_config(filename):
 
 
 def load_column_mapping():
-    result = load_json_config(
-        "columns.json"
-    )
+    filepath = CONFIG_DIR / "columns.json"
+
+    result = load_json_config(filepath)
 
     return result
 
 
 def load_app_config():
-    result = load_json_config(
-        "app.json"
-    )
+    filepath = CONFIG_DIR / "app.json"
+
+    result = load_json_config(filepath)
 
     return result
