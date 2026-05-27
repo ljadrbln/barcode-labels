@@ -1,3 +1,5 @@
+![Tests](https://github.com/ljadrbln/barcode-labels/actions/workflows/tests.yml/badge.svg)
+
 # Barcode Labels Generator
 
 Generate:
