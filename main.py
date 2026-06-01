@@ -3,7 +3,7 @@ from reportlab.pdfgen import canvas
 from src.barcode_storage import get_or_create_barcode
 from src.bootstrap import parse_args
 from src.bootstrap import register_fonts
-from src.config_loader import load_app_config
+from src.config_loader import load_profile_config
 from src.config_loader import load_column_mapping
 from src.excel_reader import read_products
 from src.excel_writer import write_products_with_barcodes
@@ -80,8 +80,8 @@ def main():
 
     register_fonts()
 
-    app_config = load_app_config()
-    column_mapping = load_column_mapping()
+    profile_config = load_profile_config(args.profile)
+    column_mapping = profile_config["columns"]
     products = read_products(input_filepath, column_mapping)
 
     barcodes = render_labels_pdf(
