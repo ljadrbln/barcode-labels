@@ -23,6 +23,16 @@ def build_product_key(product, key_fields):
 
     return result
 
+def build_item_line(product, item_fields):
+    values = []
+
+    for field in item_fields:
+        value = str(product[field])
+        values.append(value)
+
+    result = " ".join(values)
+
+    return result
 
 def build_label_data(
     product,
@@ -30,15 +40,17 @@ def build_label_data(
 ):
     store_name = profile_config["store_name"]
     key_fields = profile_config["product_key_fields"]
+    item_fields = profile_config["label_item_fields"]
 
-    article = str(product["article"])
-    name = str(product["name"])
-    size = str(product["size"])
     price = str(product["price"])
     currency = product.get("currency") or ""
 
     price_line = f"{price} {currency}".strip()
-    item_line = f"{article} {name} {size}"
+
+    item_line = build_item_line(
+        product,
+        item_fields
+    )
 
     product_key = build_product_key(
         product,
