@@ -2,16 +2,13 @@
 
 # Barcode Labels Generator
 
-Generate:
-
-- EAN13 barcodes
-- PDF labels
-- XLSX files with barcode column
+Generate EAN13 barcodes, printable PDF labels, and XLSX files with a barcode column.
 
 ## Features
 
-- Stable barcode generation
+- Stable EAN13 barcode generation
 - Same product always gets the same barcode
+- Profile-based configuration for different product types
 - Configurable Excel column mapping
 - Configurable store name
 - PDF label rendering
@@ -25,7 +22,7 @@ Create virtual environment:
 python3 -m venv venv
 ```
 
-Activate:
+Activate it:
 
 Linux/macOS:
 
@@ -47,42 +44,79 @@ pip install -r requirements.txt
 
 ## Input XLSX Format
 
+Example for shoes:
+
 | article    | name          | size | price | currency |
 | ---------- | ------------- | ---- | ----- | -------- |
 | 2xx1-BR-37 | Giovanna 2601 | 37   | 199   | USD      |
 
-Actual column names are configurable via:
+Example for bags:
+
+| article | name        | price | currency |
+| ------- | ----------- | ----- | -------- |
+| BG-001  | Leather Bag | 149   | USD      |
+
+## Profiles
+
+The application supports product profiles.
+
+Available demo profiles:
 
 ```text
-config/columns.json
+shoes
+bags
 ```
 
-Example:
+Run with a specific profile:
+
+```bash
+python3 main.py --profile shoes
+```
+
+```bash
+python3 main.py --profile bags
+```
+
+Profile files are stored in:
+
+```text
+config/profiles/
+```
+
+Example profile:
 
 ```json
 {
-  "article": "Article",
-  "name": "Name",
-  "size": "Size",
-  "price": "Price",
-  "currency": "Currency",
-  "barcode": "Barcode"
+  "store_name": "Roga i Kopyta",
+  "columns": {
+    "article": "Article",
+    "name": "Name",
+    "size": "Size",
+    "price": "Price",
+    "currency": "Currency",
+    "barcode": "Barcode"
+  },
+  "product_key_fields": ["article", "size"],
+  "label_item_fields": ["article", "name", "size"],
+  "layout": "label_58x40_vertical_price"
 }
 ```
 
-## Application Config
-
-Application settings:
-
-```text
-config/app.json
-```
-
-Example:
+For products without size, use another profile:
 
 ```json
 {
-  "store_name": "Roga i Kopyta"
+  "store_name": "Roga i Kopyta",
+  "columns": {
+    "article": "Article",
+    "name": "Name",
+    "price": "Price",
+    "currency": "Currency",
+    "barcode": "Barcode"
+  },
+  "product_key_fields": ["article"],
+  "label_item_fields": ["article", "name"],
+  "layout": "label_58x40_vertical_price"
 }
 ```
 
@@ -98,6 +132,7 @@ Custom files:
 
 ```bash
 python3 main.py \
+    --profile shoes \
     --input input/products.xlsx \
     --output output/products_with_barcodes.xlsx
 ```
@@ -122,6 +157,12 @@ Run tests:
 
 ```bash
 pytest
+```
+
+Run tests with coverage:
+
+```bash
+python -m pytest -p pytest_cov --cov=src --cov-report=term-missing
 ```
 
 ## Notes
