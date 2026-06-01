@@ -45,7 +45,7 @@ def build_label_data(
         key_fields
     )
 
-    barcode_value = get_or_create_barcode(article, size)
+    barcode_value = get_or_create_barcode(product_key)
 
     result = {
         "product_key": product_key,

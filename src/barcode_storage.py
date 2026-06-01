@@ -24,24 +24,23 @@ def save_storage(data, data_file=DATA_FILE):
         json.dump(data, file, indent=4)
 
 
-def build_product_key(
-    article,
-    size
+
+def get_or_create_barcode(
+    product_key,
+    data_file=DATA_FILE
 ):
-    result = f"{article}:{size}"
-
-    return result
-
-
-def get_or_create_barcode(article, size, data_file=DATA_FILE):
     storage = load_storage(data_file)
-    product_key = build_product_key(article, size)
 
     if product_key in storage:
         return storage[product_key]
 
     barcode = generate_ean13_barcode()
+
     storage[product_key] = barcode
-    save_storage(storage, data_file)
+
+    save_storage(
+        storage,
+        data_file
+    )
 
     return barcode

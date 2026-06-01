@@ -1,13 +1,6 @@
-from src.barcode_storage import build_product_key
 from src.barcode_storage import get_or_create_barcode
 from src.barcode_storage import load_storage
 from src.barcode_storage import save_storage
-
-
-def test_build_product_key():
-    result = build_product_key("227701", "40(p)")
-
-    assert result == "227701:40(p)"
 
 
 def test_load_storage_returns_empty_dict_for_missing_file(tmp_path):
@@ -35,7 +28,8 @@ def test_save_and_load_storage(tmp_path):
 def test_get_or_create_barcode_returns_same_barcode_for_same_product(tmp_path):
     data_file = tmp_path / "barcodes.json"
 
-    first_result = get_or_create_barcode("227701", "40(p)", data_file)
-    second_result = get_or_create_barcode("227701", "40(p)", data_file)
+    first_result = get_or_create_barcode("227701:40(p)", data_file)
+    second_result = get_or_create_barcode("227701:40(p)", data_file)
+    
 
     assert first_result == second_result
