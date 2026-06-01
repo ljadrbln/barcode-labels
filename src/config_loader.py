@@ -26,3 +26,10 @@ def load_app_config():
     result = load_json_config(filepath)
 
     return result
+
+def load_profile_config(profile_name):
+    filepath = CONFIG_DIR / "profiles" / f"{profile_name}.json"
+
+    result = load_json_config(filepath)
+
+    return result
