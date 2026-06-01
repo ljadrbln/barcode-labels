@@ -24,8 +24,8 @@ def test_write_products_with_new_barcode_column(tmp_path):
 
     workbook.save(input_filepath)
 
-    barcodes = {
-        "2x7x01:40(p)": "2966150061736"
+    barcodes_by_row = {
+        2: "2966150061736"
     }
 
     column_mapping = {
@@ -37,7 +37,7 @@ def test_write_products_with_new_barcode_column(tmp_path):
     write_products_with_barcodes(
         input_filepath,
         output_filepath,
-        barcodes,
+        barcodes_by_row,
         column_mapping
     )
 
@@ -70,8 +70,8 @@ def test_write_products_with_existing_barcode_column(tmp_path):
 
     workbook.save(input_filepath)
 
-    barcodes = {
-        "2x7x01:40(p)": "2966150061736"
+    barcodes_by_row = {
+        2: "2966150061736"
     }
 
     column_mapping = {
@@ -83,7 +83,7 @@ def test_write_products_with_existing_barcode_column(tmp_path):
     write_products_with_barcodes(
         input_filepath,
         output_filepath,
-        barcodes,
+        barcodes_by_row,
         column_mapping
     )
 

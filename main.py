@@ -80,7 +80,7 @@ def render_labels_pdf(
     pdf = canvas.Canvas(str(pdf_path))
     pdf.setPageSize((LABEL_WIDTH, LABEL_HEIGHT))
 
-    barcodes = {}
+    barcodes_by_row = {}
 
     for product in products:
         label_data = build_label_data(
@@ -88,10 +88,10 @@ def render_labels_pdf(
             profile_config
         )
 
-        product_key = label_data["product_key"]
+        row_index = product["_row_index"]
         barcode_value = label_data["barcode_value"]
 
-        barcodes[product_key] = barcode_value
+        barcodes_by_row[row_index] = barcode_value
 
         render_label_58x40_vertical_price(
             pdf,
@@ -102,7 +102,7 @@ def render_labels_pdf(
 
     pdf.save()
 
-    return barcodes
+    return barcodes_by_row
 
 
 def main():
