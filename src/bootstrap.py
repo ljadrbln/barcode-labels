@@ -19,6 +19,11 @@ def parse_args():
         default="output/products_with_barcodes.xlsx"
     )
 
+    parser.add_argument(
+        "--profile",
+        default="shoes"
+    )    
+
     result = parser.parse_args()
 
     return result
