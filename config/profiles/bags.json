@@ -1,0 +1,13 @@
+{
+    "store_name": "Roga i Kopyta",
+    "columns": {
+        "article": "Артикул",
+        "name": "Название",
+        "price": "Цена",
+        "currency": "Валюта",
+        "barcode": "Штрихкод"
+    },
+    "product_key_fields": ["article"],
+    "label_item_fields": ["article", "name"],
+    "layout": "label_58x40_vertical_price"
+}
