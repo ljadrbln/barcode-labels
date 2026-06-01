@@ -43,6 +43,7 @@ def test_read_products(tmp_path):
 
     assert result == [
         {
+            "_row_index": 2,
             "article": "2x7x01",
             "name": "ICEBERG white",
             "size": "40 (x)",

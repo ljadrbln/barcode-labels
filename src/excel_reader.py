@@ -27,8 +27,10 @@ def read_products(
 
     result = []
 
-    for row in rows[1:]:
-        item = {}
+    for row_index, row in enumerate(rows[1:], start=2):
+        item = {
+            "_row_index": row_index
+        }
 
         for internal_name, index in header_indexes.items():
             item[internal_name] = row[index]
