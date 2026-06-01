@@ -11,12 +11,12 @@ def parse_args():
 
     parser.add_argument(
         "--input",
-        default="input/demo_products.xlsx"
+        default="input/demo_products_shoes.xlsx"
     )
 
     parser.add_argument(
         "--output",
-        default="output/products_with_barcodes.xlsx"
+        default="output/shoes_with_barcodes.xlsx"
     )
 
     parser.add_argument(
