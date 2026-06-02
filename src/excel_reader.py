@@ -28,6 +28,16 @@ def read_products(
     result = []
 
     for row_index, row in enumerate(rows[1:], start=2):
+        is_empty = True
+
+        for value in row:
+            if value not in (None, ""):
+                is_empty = False
+                break
+
+        if is_empty:
+            continue
+
         item = {
             "_row_index": row_index
         }
