@@ -27,7 +27,8 @@ def build_item_line(product, item_fields):
 
 def build_label_data(
     product,
-    profile_config
+    profile_config,
+    data_file=None
 ):
     store_name = profile_config["store_name"]
     key_fields = profile_config["product_key_fields"]
@@ -48,9 +49,10 @@ def build_label_data(
         key_fields
     )
 
-    barcode_value = get_or_create_barcode(
-        product_key
-    )
+    if data_file is None:
+        barcode_value = get_or_create_barcode(product_key)
+    else:
+        barcode_value = get_or_create_barcode(product_key, data_file)
 
     result = {
         "store_line": store_name,
