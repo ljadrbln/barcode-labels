@@ -51,3 +51,89 @@ def test_read_products(tmp_path):
             "currency": "usd"
         }
     ]
+
+def test_read_products_without_size_column(tmp_path):
+    filepath = tmp_path / "bags.xlsx"
+
+    workbook = Workbook()
+
+    sheet = workbook.active
+
+    sheet.append([
+        "Article",
+        "Name",
+        "Price"
+    ])
+
+    sheet.append([
+        "BG-001",
+        "Leather Bag",
+        149
+    ])
+
+    workbook.save(filepath)
+
+    column_mapping = {
+        "article": "Article",
+        "name": "Name",
+        "price": "Price"
+    }
+
+    result = read_products(
+        filepath,
+        column_mapping
+    )
+
+    assert result == [
+        {
+            "_row_index": 2,
+            "article": "BG-001",
+            "name": "Leather Bag",
+            "price": 149
+        }
+    ]
+
+def test_read_products_ignores_extra_columns(tmp_path):
+    filepath = tmp_path / "products.xlsx"
+
+    workbook = Workbook()
+
+    sheet = workbook.active
+
+    sheet.append([
+        "Article",
+        "Name",
+        "Price",
+        "Color",
+        "Country"
+    ])
+
+    sheet.append([
+        "BG-001",
+        "Leather Bag",
+        149,
+        "Black",
+        "Italy"
+    ])
+
+    workbook.save(filepath)
+
+    column_mapping = {
+        "article": "Article",
+        "name": "Name",
+        "price": "Price"
+    }
+
+    result = read_products(
+        filepath,
+        column_mapping
+    )
+
+    assert result == [
+        {
+            "_row_index": 2,
+            "article": "BG-001",
+            "name": "Leather Bag",
+            "price": 149
+        }
+    ]    
