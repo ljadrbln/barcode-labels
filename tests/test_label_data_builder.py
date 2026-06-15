@@ -1,7 +1,8 @@
 from src.label_data_builder import build_item_line
 from src.label_data_builder import build_product_key
 from src.label_data_builder import build_label_data
-
+from src.label_data_builder import format_currency
+from src.label_data_builder import format_price
 
 def test_build_product_key_for_shoes():
     product = {
@@ -137,5 +138,21 @@ def test_build_label_data_for_shoes(tmp_path):
 
     assert result["store_line"] == "Roga i Kopyta"
     assert result["item_line"] == "2xx1-BR-37 Giovanna 2601 37"
-    assert result["price_line"] == "199 USD"
+    assert result["price_line"] == "199.00 $"
     assert len(result["barcode_value"]) == 13
+
+
+def test_format_currency_maps_known_currency_code():
+    assert format_currency("UAH") == "грн"
+
+
+def test_format_currency_keeps_unknown_currency_code():
+    assert format_currency("PLN") == "PLN"
+
+
+def test_format_price_uses_thousands_separator_and_currency_label():
+    assert format_price(10990, "RUB") == "10 990.00 ₽"
+
+
+def test_format_price_keeps_unknown_currency_code():
+    assert format_price(199, "PLN") == "199.00 PLN"

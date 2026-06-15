@@ -30,13 +30,24 @@ def parse_args():
 
 
 def register_fonts():
-    font_path = Path(
+    regular_font_path = Path(
         "assets/fonts/DejaVuSans.ttf"
+    )
+
+    bold_font_path = Path(
+        "assets/fonts/DejaVuSans-Bold.ttf"
     )
 
     pdfmetrics.registerFont(
         TTFont(
             "DejaVu",
-            str(font_path)
+            str(regular_font_path)
+        )
+    )
+
+    pdfmetrics.registerFont(
+        TTFont(
+            "DejaVu-Bold",
+            str(bold_font_path)
         )
     )
