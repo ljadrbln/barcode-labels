@@ -29,12 +29,12 @@ def build_price_line(product):
     price = product["price"]
     currency = product.get("currency") or ""
 
-    formatted_price = format_price(
+    result = format_price(
         price,
         currency
     )
 
-    return formatted_price
+    return result
 
 def format_price(
     price,
@@ -45,8 +45,31 @@ def format_price(
     formatted_amount = f"{amount:,.2f}"
     formatted_amount = formatted_amount.replace(",", " ")
 
-    return f"{formatted_amount} {currency}".strip()
+    formatted_currency = format_currency(
+        currency
+    )
 
+    result = (
+        f"{formatted_amount} "
+        f"{formatted_currency}"
+    ).strip()
+
+    return result
+
+def format_currency(currency):
+    currency_map = {
+        "USD": "$",
+        "EUR": "€",
+        "RUB": "₽",
+        "UAH": "грн",
+    }
+
+    result = currency_map.get(
+        currency,
+        currency
+    )
+
+    return result
 
 def build_label_data(
     product,
