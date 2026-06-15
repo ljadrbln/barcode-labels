@@ -29,9 +29,23 @@ def build_price_line(product):
     price = product["price"]
     currency = product.get("currency") or ""
 
-    result = f"{price} {currency}".strip()
+    formatted_price = format_price(
+        price,
+        currency
+    )
 
-    return result
+    return formatted_price
+
+def format_price(
+    price,
+    currency
+):
+    amount = float(price)
+
+    formatted_amount = f"{amount:,.2f}"
+    formatted_amount = formatted_amount.replace(",", " ")
+
+    return f"{formatted_amount} {currency}".strip()
 
 
 def build_label_data(
