@@ -25,6 +25,15 @@ def build_item_line(product, item_fields):
     return result
 
 
+def build_price_line(product):
+    price = product["price"]
+    currency = product.get("currency") or ""
+
+    result = f"{price} {currency}".strip()
+
+    return result
+
+
 def build_label_data(
     product,
     profile_config,
@@ -34,10 +43,7 @@ def build_label_data(
     key_fields = profile_config["product_key_fields"]
     item_fields = profile_config["label_item_fields"]
 
-    price = str(product["price"])
-    currency = product.get("currency") or ""
-
-    price_line = f"{price} {currency}".strip()
+    price_line = build_price_line(product)
 
     item_line = build_item_line(
         product,
@@ -52,7 +58,10 @@ def build_label_data(
     if data_file is None:
         barcode_value = get_or_create_barcode(product_key)
     else:
-        barcode_value = get_or_create_barcode(product_key, data_file)
+        barcode_value = get_or_create_barcode(
+            product_key,
+            data_file
+        )
 
     result = {
         "store_line": store_name,
