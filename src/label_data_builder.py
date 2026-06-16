@@ -17,12 +17,22 @@ def build_item_line(product, item_fields):
     values = []
 
     for field in item_fields:
-        value = str(product[field])
-        values.append(value)
+        value = product[field]
+
+        if field == "size":
+            value = format_size(value)
+
+        values.append(str(value))
 
     result = " ".join(values)
 
     return result
+
+def format_size(size):
+    if not size:
+        return ""
+
+    return f"{size} р."
 
 
 def build_price_line(product):
