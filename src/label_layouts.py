@@ -7,9 +7,9 @@ LABEL_WIDTH = 58 * mm
 LABEL_HEIGHT = 40 * mm
 
 FONT_FAMILY = "DejaVu"
-PRICE_FONT_FAMILY = "DejaVu-Bold"
+BOLD_FONT_FAMILY = "DejaVu-Bold"
 
-STORE_FONT_SIZE = 12
+STORE_FONT_SIZE = 10
 ITEM_FONT_SIZE = 10
 PRICE_FONT_SIZE = 12
 
@@ -79,7 +79,7 @@ def draw_vertical_price(
     pdf.saveState()
 
     pdf.setFont(
-        PRICE_FONT_FAMILY,
+        BOLD_FONT_FAMILY,
         PRICE_FONT_SIZE
     )
 
@@ -104,7 +104,7 @@ def draw_store_line(
     store_line
 ):
     pdf.setFont(
-        FONT_FAMILY,
+        BOLD_FONT_FAMILY,
         STORE_FONT_SIZE
     )
 
