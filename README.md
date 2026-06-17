@@ -11,6 +11,9 @@ Generate EAN13 barcodes, printable PDF labels, and XLSX files with a barcode col
 - Profile-based configuration for different product types
 - Configurable Excel column mapping
 - Configurable store name
+- Product brand support
+- Configurable label layouts
+- Excel column validation
 - PDF label rendering
 - XLSX export with barcode column
 
@@ -46,9 +49,9 @@ pip install -r requirements.txt
 
 Example for shoes:
 
-| article    | name          | size | price | currency |
-| ---------- | ------------- | ---- | ----- | -------- |
-| 2xx1-BR-37 | Giovanna 2601 | 37   | 199   | USD      |
+| brand    | article    | name          | size | price | currency |
+| -------- | ---------- | ------------- | ---- | ----- | -------- |
+| Giovanna | 2xx1-BR-37 | Giovanna 2601 | 37   | 199   | USD      |
 
 Example for bags:
 
@@ -83,12 +86,13 @@ Profile files are stored in:
 config/profiles/
 ```
 
-Example profile:
+Example profile for shoes:
 
 ```json
 {
   "store_name": "Roga i Kopyta",
   "columns": {
+    "brand": "Brand",
     "article": "Article",
     "name": "Name",
     "size": "Size",
@@ -102,7 +106,7 @@ Example profile:
 }
 ```
 
-For products without size, use another profile:
+Example profile for bags:
 
 ```json
 {
@@ -119,6 +123,28 @@ For products without size, use another profile:
   "layout": "label_58x40_vertical_price"
 }
 ```
+
+## Validation
+
+The application validates required Excel columns before processing.
+
+Required columns are determined by:
+
+- `product_key_fields`
+- `label_item_fields`
+- `price`
+- `currency`
+
+If a required column is missing, the application stops with a clear error message:
+
+```text
+Required column 'price' not found in Excel file
+```
+
+The following columns are optional:
+
+- `brand`
+- `barcode`
 
 ## Run
 
@@ -149,7 +175,37 @@ output/
 
 ## Label Example
 
-![Label example](docs/images/label-example.jpg)
+![Label example](docs/images/label-example.png)
+
+## Price Formatting
+
+Prices are formatted automatically:
+
+```text
+10990 + UAH -> 10 990.00 грн
+199 + USD -> 199.00 $
+199 + PLN -> 199.00 PLN
+```
+
+### Supported Currency Labels
+
+```python
+currency_map = {
+    "EUR": "€",
+    "RUB": "₽",
+    "UAH": "грн",
+    "USD": "$",
+}
+```
+
+Unknown currency codes are displayed unchanged.
+
+Example:
+
+```text
+PLN -> PLN
+CHF -> CHF
+```
 
 ## Tests
 
@@ -167,19 +223,19 @@ python -m pytest -p pytest_cov --cov=src --cov-report=term-missing
 
 ## Notes
 
-- Barcodes are stored in:
+Barcodes are stored in:
 
-  ```text
-  data/barcodes.json
-  ```
+```text
+data/barcodes.json
+```
 
-- Runtime files are ignored via `.gitignore`
+Runtime files are ignored via `.gitignore`.
 
-- PDF label size:
+PDF label size:
 
-  ```text
-  58x40 mm
-  ```
+```text
+58x40 mm
+```
 
 ## License
 
