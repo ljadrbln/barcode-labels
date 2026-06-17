@@ -1,10 +1,42 @@
 from openpyxl import load_workbook
 
+REQUIRED_COLUMN_NAMES = [
+    "price",
+    "currency"
+]
+
+
+def build_required_column_names(profile_config):
+    result = []
+
+    result.extend(profile_config["product_key_fields"])
+    result.extend(profile_config["label_item_fields"])
+    result.extend(REQUIRED_COLUMN_NAMES)
+
+    return set(result)
+
+
+def validate_required_columns(
+    headers,
+    profile_config
+):
+    column_mapping = profile_config["columns"]
+    required_column_names = build_required_column_names(profile_config)
+
+    for internal_name in required_column_names:
+        excel_column_name = column_mapping[internal_name]
+
+        if excel_column_name not in headers:
+            raise ValueError(
+                f"Required column '{internal_name}' not found in Excel file"
+            )
+        
 
 def read_products(
     filepath,
-    column_mapping
+    profile_config
 ):
+    column_mapping = profile_config["columns"]
     workbook = load_workbook(filepath)
 
     sheet = workbook.active
@@ -14,6 +46,11 @@ def read_products(
     )
 
     headers = rows[0]
+
+    validate_required_columns(
+        headers,
+        profile_config
+    )
 
     header_indexes = {}
 
