@@ -34,6 +34,10 @@ def format_size(size):
 
     return f"{size} р."
 
+def build_brand_line(product):
+    result = product.get("brand") or ""
+
+    return result
 
 def build_price_line(product):
     price = product["price"]
@@ -91,6 +95,7 @@ def build_label_data(
     item_fields = profile_config["label_item_fields"]
 
     price_line = build_price_line(product)
+    brand_line = build_brand_line(product)
 
     item_line = build_item_line(
         product,
@@ -112,6 +117,7 @@ def build_label_data(
 
     result = {
         "store_line": store_name,
+        "brand_line": brand_line,
         "item_line": item_line,
         "price_line": price_line,
         "barcode_value": barcode_value,
