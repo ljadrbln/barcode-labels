@@ -1,7 +1,7 @@
 from openpyxl import Workbook
 
 from src.excel_reader import read_products
-
+from src.excel_reader import validate_required_columns
 
 def test_read_products(tmp_path):
     filepath = tmp_path / "products.xlsx"
@@ -280,3 +280,67 @@ def test_read_products_does_not_require_barcode_column(tmp_path):
             "currency": "USD"
         }
     ]
+
+
+def test_validate_required_columns_raises_exception_when_required_column_is_missing():
+    headers = [
+        "Article",
+        "Name",
+        "Currency"
+    ]
+
+    profile_config = {
+        "columns": {
+            "article": "Article",
+            "name": "Name",
+            "price": "Price",
+            "currency": "Currency"
+        },
+        "product_key_fields": [
+            "article"
+        ],
+        "label_item_fields": [
+            "article",
+            "name"
+        ]
+    }
+
+    try:
+        validate_required_columns(
+            headers,
+            profile_config
+        )
+
+        assert False
+    except ValueError as error:
+        assert str(error) == "Required column 'price' not found in Excel file"
+
+
+def test_validate_required_columns_accepts_existing_required_columns():
+    headers = [
+        "Article",
+        "Name",
+        "Price",
+        "Currency"
+    ]
+
+    profile_config = {
+        "columns": {
+            "article": "Article",
+            "name": "Name",
+            "price": "Price",
+            "currency": "Currency"
+        },
+        "product_key_fields": [
+            "article"
+        ],
+        "label_item_fields": [
+            "article",
+            "name"
+        ]
+    }
+
+    validate_required_columns(
+        headers,
+        profile_config
+    )

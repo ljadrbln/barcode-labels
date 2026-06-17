@@ -33,3 +33,15 @@ def test_get_or_create_barcode_returns_same_barcode_for_same_product(tmp_path):
     
 
     assert first_result == second_result
+
+
+def test_get_or_create_barcode_creates_valid_barcode(tmp_path):
+    data_file = tmp_path / "barcodes.json"
+
+    result = get_or_create_barcode(
+        "227701:40(p)",
+        data_file
+    )
+
+    assert len(result) == 13
+    assert result.isdigit()
