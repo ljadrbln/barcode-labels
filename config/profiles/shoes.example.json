@@ -1,6 +1,7 @@
 {
     "store_name": "Roga i Kopyta",
     "columns": {
+        "brand": "Бренд",
         "article": "Артикул",
         "name": "Название",
         "size": "Размер",

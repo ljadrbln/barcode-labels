@@ -33,7 +33,7 @@ def run():
 
     products = read_products(
         input_filepath,
-        column_mapping
+        profile_config
     )
 
     barcodes_by_row = render_labels_pdf(
@@ -56,6 +56,8 @@ def main():
     try:
         run()
     except FileNotFoundError as error:
+        print(error)
+    except ValueError as error:
         print(error)
 
 if __name__ == "__main__":
