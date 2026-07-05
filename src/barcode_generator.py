@@ -1,4 +1,4 @@
-import random
+import hashlib
 
 
 def calculate_ean13_checksum(first_12_digits):
@@ -22,21 +22,32 @@ def calculate_ean13_checksum(first_12_digits):
     return str(checksum)
 
 
-def generate_ean13_barcode(prefix="29"):
+def generate_ean13_barcode(
+    product_key,
+    prefix="29"
+):
     if len(prefix) >= 12:
         raise ValueError("Prefix must be shorter than 12 digits.")
 
     if not prefix.isdigit():
         raise ValueError("Prefix must contain only digits.")
 
-    random_length = 12 - len(prefix)
+    payload_length = 12 - len(prefix)
 
-    random_part = ""
+    digest = hashlib.sha256(
+        product_key.encode("utf-8")
+    ).digest()
 
-    for _ in range(random_length):
-        random_part += str(random.randint(0, 9))
+    number = int.from_bytes(
+        digest,
+        byteorder="big"
+    )
 
-    first_12_digits = prefix + random_part
+    payload = str(
+        number % (10 ** payload_length)
+    ).zfill(payload_length)
+
+    first_12_digits = prefix + payload
     checksum = calculate_ean13_checksum(first_12_digits)
 
     barcode = first_12_digits + checksum

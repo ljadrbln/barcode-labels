@@ -1,4 +1,4 @@
-from src.barcode_storage import get_or_create_barcode
+from src.barcode_generator import generate_ean13_barcode
 
 
 def build_product_key(product, key_fields):
@@ -28,16 +28,19 @@ def build_item_line(product, item_fields):
 
     return result
 
+
 def format_size(size):
     if not size:
         return ""
 
     return f"{size} р."
 
+
 def build_brand_line(product):
     result = product.get("brand") or ""
 
     return result
+
 
 def build_price_line(product):
     price = product["price"]
@@ -49,6 +52,7 @@ def build_price_line(product):
     )
 
     return result
+
 
 def format_price(
     price,
@@ -70,6 +74,7 @@ def format_price(
 
     return result
 
+
 def format_currency(currency):
     currency_map = {
         "USD": "$",
@@ -85,10 +90,10 @@ def format_currency(currency):
 
     return result
 
+
 def build_label_data(
     product,
-    profile_config,
-    data_file=None
+    profile_config
 ):
     store_name = profile_config["store_name"]
     key_fields = profile_config["product_key_fields"]
@@ -107,13 +112,9 @@ def build_label_data(
         key_fields
     )
 
-    if data_file is None:
-        barcode_value = get_or_create_barcode(product_key)
-    else:
-        barcode_value = get_or_create_barcode(
-            product_key,
-            data_file
-        )
+    barcode_value = generate_ean13_barcode(
+        product_key
+    )
 
     result = {
         "store_line": store_name,
