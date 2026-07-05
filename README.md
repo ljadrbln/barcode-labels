@@ -6,8 +6,9 @@ Generate EAN13 barcodes, printable PDF labels, and XLSX files with a barcode col
 
 ## Features
 
-- Stable EAN13 barcode generation
-- Same product always gets the same barcode
+- Deterministic EAN13 barcode generation
+- Same product key always produces the same barcode
+- No persistent barcode storage
 - Profile-based configuration for different product types
 - Configurable Excel column mapping
 - Configurable store name
@@ -207,6 +208,21 @@ PLN -> PLN
 CHF -> CHF
 ```
 
+## Barcode Generation
+
+Barcodes are generated deterministically from the product key.
+
+This means:
+
+- the same product key always produces the same barcode;
+- barcode generation does not depend on previous runs;
+- barcode generation does not depend on existing files;
+- barcode generation does not depend on Excel row order.
+
+The product key is hashed using SHA-256 and converted into a valid EAN13 barcode.
+
+Since an EAN13 barcode contains only 12 payload digits, different product keys can theoretically produce the same barcode. In practice, such collisions are extremely unlikely.
+
 ## Tests
 
 Run tests:
@@ -222,14 +238,6 @@ python -m pytest -p pytest_cov --cov=src --cov-report=term-missing
 ```
 
 ## Notes
-
-Barcodes are stored in:
-
-```text
-data/barcodes.json
-```
-
-Runtime files are ignored via `.gitignore`.
 
 PDF label size:
 
