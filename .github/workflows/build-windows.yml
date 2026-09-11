@@ -17,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.8"
 
       - name: Install dependencies
         shell: pwsh
@@ -29,12 +29,7 @@ jobs:
       - name: Build executable
         shell: pwsh
         run: |
-          pyinstaller `
-            --clean `
-            --noconfirm `
-            --name barcode-labels `
-            --collect-all reportlab `
-            main.py
+          pyinstaller --clean --noconfirm --name barcode-labels main.py
 
       - name: Prepare distribution
         shell: pwsh
