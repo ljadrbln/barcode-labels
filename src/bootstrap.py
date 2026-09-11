@@ -20,9 +20,8 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--profile",
-        default="shoes"
-    )    
+        "--profile"
+    )
 
     result = parser.parse_args()
 

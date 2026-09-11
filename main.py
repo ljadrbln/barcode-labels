@@ -7,6 +7,7 @@ from src.config_loader import load_profile_config
 from src.excel_reader import read_products
 from src.excel_writer import write_products_with_barcodes
 from src.pdf_renderer import render_labels_pdf
+from src.profile_detector import detect_profile
 
 
 def validate_input_file(filepath):
@@ -26,8 +27,13 @@ def run():
 
     register_fonts()
 
+    profile_name = args.profile
+
+    if profile_name is None:
+        profile_name = detect_profile(input_filepath)
+
     profile_config = load_profile_config(
-        args.profile
+        profile_name
     )
 
     column_mapping = profile_config["columns"]
