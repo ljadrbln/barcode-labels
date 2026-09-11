@@ -2,6 +2,7 @@ from pathlib import Path
 
 from src.bootstrap import parse_args
 from src.bootstrap import register_fonts
+from src.barcode_storage import BarcodeStorage
 from src.config_loader import load_profile_config
 from src.excel_reader import read_products
 from src.excel_writer import write_products_with_barcodes
@@ -36,10 +37,13 @@ def run():
         profile_config
     )
 
+    barcode_storage = BarcodeStorage()
+
     barcodes_by_row = render_labels_pdf(
         profile_config,
         products,
-        output_filepath
+        output_filepath,
+        barcode_storage
     )
 
     write_products_with_barcodes(

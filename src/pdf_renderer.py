@@ -10,7 +10,8 @@ from src.output_paths import build_pdf_path
 def render_labels_pdf(
     profile_config,
     products,
-    output_filepath
+    output_filepath,
+    barcode_storage
 ):
     pdf_path = build_pdf_path(output_filepath)
 
@@ -20,9 +21,12 @@ def render_labels_pdf(
     barcodes_by_row = {}
 
     for product in products:
+        barcode_value = barcode_storage.next_barcode()
+
         label_data = build_label_data(
             product,
-            profile_config
+            profile_config,
+            barcode_value
         )
 
         row_index = product["_row_index"]

@@ -121,14 +121,16 @@ def test_build_label_data_for_shoes():
         ]
     }
 
+    barcode_value = "2900000000019"
+
     result = build_label_data(
         product,
-        profile_config
+        profile_config,
+        barcode_value
     )
 
     assert result["store_line"] == "Roga i Kopyta"
     assert result["brand_line"] == "Giovanna"
     assert result["item_line"] == "2xx1-BR-37 Giovanna 2601 37 р."
     assert result["price_line"] == "199.00 $"
-    assert len(result["barcode_value"]) == 13
-    assert result["barcode_value"].isdigit()
+    assert result["barcode_value"] == barcode_value
