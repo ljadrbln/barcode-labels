@@ -64,6 +64,13 @@ set "OUTPUT_FILE=output\!INPUT_NAME!_with_barcodes.xlsx"
 if exist "!OUTPUT_FILE!" del /q "!OUTPUT_FILE!"
 
 echo.
+echo Command:
+echo.
+echo "barcode-labels.exe" ^^
+echo     --profile "!PROFILE!" ^^
+echo     --input "!INPUT_FILE!" ^^
+echo     --output "!OUTPUT_FILE!"
+echo.
 echo Generating labels...
 echo.
 
