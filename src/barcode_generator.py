@@ -1,6 +1,3 @@
-import hashlib
-
-
 def calculate_ean13_checksum(first_12_digits):
     total = 0
 
@@ -23,7 +20,7 @@ def calculate_ean13_checksum(first_12_digits):
 
 
 def generate_ean13_barcode(
-    product_key,
+    sequence,
     prefix="29"
 ):
     if len(prefix) >= 12:
@@ -32,21 +29,16 @@ def generate_ean13_barcode(
     if not prefix.isdigit():
         raise ValueError("Prefix must contain only digits.")
 
+    if not isinstance(sequence, int) or sequence < 1:
+        raise ValueError("Sequence must be a positive integer.")
+
     payload_length = 12 - len(prefix)
+    maximum_sequence = (10 ** payload_length) - 1
 
-    digest = hashlib.sha256(
-        product_key.encode("utf-8")
-    ).digest()
+    if sequence > maximum_sequence:
+        raise ValueError("Barcode sequence is exhausted for this prefix.")
 
-    number = int.from_bytes(
-        digest,
-        byteorder="big"
-    )
-
-    payload = str(
-        number % (10 ** payload_length)
-    ).zfill(payload_length)
-
+    payload = str(sequence).zfill(payload_length)
     first_12_digits = prefix + payload
     checksum = calculate_ean13_checksum(first_12_digits)
 
