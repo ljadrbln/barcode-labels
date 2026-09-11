@@ -8,7 +8,20 @@
         "currency": "Валюта",
         "barcode": "Штрихкод"
     },
-    "product_key_fields": ["article"],
-    "label_item_fields": ["article", "name"],
-    "layout": "label_58x40_vertical_price"
+    "product_key_fields": [
+        "article"
+    ],
+    "label_item_fields": [
+        "article",
+        "name"
+    ],
+    "layout": "label_58x40_vertical_price",
+    "detection": {
+        "rules": [
+            {
+                "column": "article",
+                "value_pattern": ".+"
+            }
+        ]
+    }
 }
