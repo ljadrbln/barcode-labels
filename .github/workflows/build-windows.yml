@@ -33,7 +33,6 @@ jobs:
             --clean `
             --noconfirm `
             --name barcode-labels `
-            --collect-submodules src `
             --collect-all reportlab `
             main.py
 

@@ -38,11 +38,33 @@ if !FILE_COUNT! GTR 1 (
 )
 
 echo.
+echo What are we printing?
+echo.
+echo 1 - Shoes
+echo 2 - Bags
+echo.
+
+set /p "PROFILE_CHOICE=Enter 1 or 2: "
+
+if "!PROFILE_CHOICE!"=="1" (
+    set "PROFILE=shoes"
+) else if "!PROFILE_CHOICE!"=="2" (
+    set "PROFILE=bags"
+) else (
+    echo.
+    echo Invalid choice. Enter 1 or 2.
+    echo.
+    pause
+    exit /b 1
+)
+
+echo.
 echo Input: !INPUT_FILE!
+echo Profile: !PROFILE!
 echo Generating labels...
 echo.
 
-"barcode-labels.exe" --input "!INPUT_FILE!" --output "output\!INPUT_NAME!_with_barcodes.xlsx"
+"barcode-labels.exe" --profile "!PROFILE!" --input "!INPUT_FILE!" --output "output\!INPUT_NAME!_with_barcodes.xlsx"
 
 if errorlevel 1 (
     echo.
