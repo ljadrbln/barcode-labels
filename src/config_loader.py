@@ -6,7 +6,7 @@ CONFIG_DIR = Path("config")
 
 
 def load_json_config(filepath):
-    with open(filepath, "r") as file:
+    with open(filepath, "r", encoding="utf-8") as file:
         result = json.load(file)
 
     return result
