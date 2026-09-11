@@ -29,7 +29,12 @@ jobs:
       - name: Build executable
         shell: pwsh
         run: |
-          pyinstaller --clean --noconfirm --name barcode-labels main.py
+          pyinstaller `
+            --clean `
+            --noconfirm `
+            --name barcode-labels `
+            --collect-submodules reportlab.graphics.barcode `
+            main.py
 
       - name: Prepare distribution
         shell: pwsh
