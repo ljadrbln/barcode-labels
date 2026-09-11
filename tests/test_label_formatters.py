@@ -32,7 +32,7 @@ def test_format_price_keeps_unknown_currency_code():
 
 
 def test_format_size():
-    assert format_size("37") == "37 р."
+    assert format_size("37") == "р. 37"
 
 
 def test_format_size_returns_empty_string_for_empty_value():
