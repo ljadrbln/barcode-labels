@@ -28,6 +28,8 @@ def load_profile_config(profile_name):
 
         raise FileNotFoundError(message)
 
+    print(f"Profile file: {filepath.resolve()}")
+
     result = load_json_config(filepath)
 
     return result
