@@ -33,8 +33,17 @@ jobs:
             --clean `
             --noconfirm `
             --name barcode-labels `
-            --collect-submodules reportlab.graphics.barcode `
+            --collect-submodules src `
+            --collect-all reportlab `
             main.py
+
+      - name: Smoke test executable
+        shell: pwsh
+        run: |
+          dist\barcode-labels\barcode-labels.exe --help
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Prepare distribution
         shell: pwsh
