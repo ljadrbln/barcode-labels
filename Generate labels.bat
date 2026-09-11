@@ -8,6 +8,7 @@ if not exist "output" mkdir "output"
 if not exist "data" mkdir "data"
 
 set "INPUT_FILE="
+set "INPUT_NAME="
 set /a FILE_COUNT=0
 
 for %%F in ("input\*.xlsx") do (
@@ -18,17 +19,16 @@ for %%F in ("input\*.xlsx") do (
     )
 )
 
-if %FILE_COUNT% EQU 0 (
+if !FILE_COUNT! EQU 0 (
     echo.
     echo No XLSX file found in the input folder.
-    echo Put one XLSX file into:
-    echo %CD%\input
+    echo Put one XLSX file into the input folder and run this file again.
     echo.
     pause
     exit /b 1
 )
 
-if %FILE_COUNT% GTR 1 (
+if !FILE_COUNT! GTR 1 (
     echo.
     echo More than one XLSX file was found in the input folder.
     echo Leave exactly one XLSX file and run this file again.
@@ -54,9 +54,8 @@ if errorlevel 1 (
 
 echo.
 echo Done.
-echo Results are in:
-echo %CD%\output
+echo Results are in the output folder.
 echo.
 
-start "" "%CD%\output"
+start "" "output"
 pause

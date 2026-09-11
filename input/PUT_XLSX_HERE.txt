@@ -1,0 +1,1 @@
+Put exactly one XLSX file in this folder, then run Generate labels.bat.
