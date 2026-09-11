@@ -1,3 +1,4 @@
+from src.barcode_storage import BarcodeStorage
 from src.output_paths import build_pdf_path
 from src.pdf_renderer import render_labels_pdf
 from src.bootstrap import register_fonts
@@ -29,10 +30,15 @@ def test_render_labels_pdf_creates_pdf(tmp_path):
         ]
     }
 
+    barcode_storage = BarcodeStorage(
+        tmp_path / "barcodes.sqlite3"
+    )
+
     result = render_labels_pdf(
         profile_config,
         products,
-        output_filepath
+        output_filepath,
+        barcode_storage
     )
 
     pdf_path = build_pdf_path(

@@ -1,0 +1,52 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
+
+      - name: Build executable
+        shell: pwsh
+        run: |
+          pyinstaller --clean --noconfirm --name barcode-labels main.py
+
+      - name: Prepare distribution
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package\Barcode-Labels | Out-Null
+          Copy-Item -Recurse dist\barcode-labels\* package\Barcode-Labels\
+          Copy-Item -Recurse config package\Barcode-Labels\config
+          Copy-Item -Recurse assets package\Barcode-Labels\assets
+          Copy-Item "Generate labels.bat" package\Barcode-Labels\
+
+          New-Item -ItemType Directory -Force package\Barcode-Labels\input | Out-Null
+          New-Item -ItemType Directory -Force package\Barcode-Labels\output | Out-Null
+          New-Item -ItemType Directory -Force package\Barcode-Labels\data | Out-Null
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Barcode-Labels-Windows
+          path: package/Barcode-Labels/
+          if-no-files-found: error

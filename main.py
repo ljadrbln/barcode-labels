@@ -2,10 +2,12 @@ from pathlib import Path
 
 from src.bootstrap import parse_args
 from src.bootstrap import register_fonts
+from src.barcode_storage import BarcodeStorage
 from src.config_loader import load_profile_config
 from src.excel_reader import read_products
 from src.excel_writer import write_products_with_barcodes
 from src.pdf_renderer import render_labels_pdf
+from src.profile_detector import detect_profile
 
 
 def validate_input_file(filepath):
@@ -25,8 +27,13 @@ def run():
 
     register_fonts()
 
+    profile_name = args.profile
+
+    if profile_name is None:
+        profile_name = detect_profile(input_filepath)
+
     profile_config = load_profile_config(
-        args.profile
+        profile_name
     )
 
     column_mapping = profile_config["columns"]
@@ -36,10 +43,13 @@ def run():
         profile_config
     )
 
+    barcode_storage = BarcodeStorage()
+
     barcodes_by_row = render_labels_pdf(
         profile_config,
         products,
-        output_filepath
+        output_filepath,
+        barcode_storage
     )
 
     write_products_with_barcodes(
