@@ -47,6 +47,15 @@ def read_products(
 
     headers = rows[0]
 
+    print(f"Excel columns: {headers!r}")
+    print("Expected columns:")
+
+    required_column_names = build_required_column_names(profile_config)
+
+    for internal_name in sorted(required_column_names):
+        excel_column_name = column_mapping[internal_name]
+        print(f"  {internal_name}: {excel_column_name!r}")
+
     validate_required_columns(
         headers,
         profile_config
