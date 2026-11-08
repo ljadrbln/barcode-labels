@@ -115,9 +115,17 @@ def build_label_data(
     brand_line = build_brand_line(product)
 
     article_line = ""
-    if profile_config.get("layout") == "label_58x40_bags":
+    layout = profile_config.get("layout")
+
+    if layout in ("label_58x40_bags", "label_58x40_shoes"):
         article_line = str(product["article"])
-        item_line = str(product["color"] or "")
+        color = str(product.get("color") or "").strip()
+
+        if layout == "label_58x40_shoes":
+            size = format_size(product.get("size"))
+            item_line = " · ".join(part for part in (color, size) if part)
+        else:
+            item_line = color
     else:
         item_line = build_item_line(product, item_fields)
 

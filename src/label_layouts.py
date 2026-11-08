@@ -50,6 +50,11 @@ def render_label_58x40_bags(
     draw_barcode(pdf, layout, label_data["barcode_value"])
 
 
+def render_label_58x40_shoes(pdf, label_data):
+    # Reuse the same geometry as the bags label.
+    render_label_58x40_bags(pdf, label_data)
+
+
 def draw_bags_logo(pdf, layout, label_data):
     logo_path = label_data.get("logo_path")
 

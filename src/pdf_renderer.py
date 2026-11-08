@@ -5,6 +5,7 @@ from src.label_layouts import LABEL_WIDTH
 from src.label_layouts import LABEL_HEIGHT
 from src.label_layouts import render_label_58x40_vertical_price
 from src.label_layouts import render_label_58x40_bags
+from src.label_layouts import render_label_58x40_shoes
 from src.output_paths import build_pdf_path
 
 
@@ -22,6 +23,7 @@ def render_labels_pdf(
     layouts = {
         "label_58x40_vertical_price": render_label_58x40_vertical_price,
         "label_58x40_bags": render_label_58x40_bags,
+        "label_58x40_shoes": render_label_58x40_shoes,
     }
     layout_name = profile_config.get("layout", "label_58x40_vertical_price")
     render_label = layouts[layout_name]

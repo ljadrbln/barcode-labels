@@ -66,3 +66,44 @@ def test_bags_layout_uses_logo_or_store_fallback(monkeypatch):
     render_label_58x40_bags(object(), data)
 
     assert calls == ["separator", "price", "store", "brand", "article", "color", "barcode"]
+
+
+def test_shoes_label_data_has_article_color_and_size():
+    product = {
+        "article": "SH-001", "name": "ICEBERG Shoes", "brand": "ICEBERG",
+        "color": "Красный", "size": "38", "price": 149, "currency": "USD",
+    }
+    profile = {
+        "store_name": "COSMO", "layout": "label_58x40_shoes",
+        "label_item_fields": ["article", "color", "size"],
+    }
+
+    result = build_label_data(product, profile, "1234567890123")
+
+    assert result["brand_line"] == "ICEBERG"
+    assert result["article_line"] == "SH-001"
+    assert result["item_line"] == "Красный · р. 38"
+    assert product["name"] == "ICEBERG Shoes"
+
+
+def test_shoes_label_data_omits_missing_color():
+    product = {
+        "article": "SH-001", "brand": "ICEBERG",
+        "size": 38, "price": 149, "currency": "USD",
+    }
+    profile = {
+        "store_name": "COSMO", "layout": "label_58x40_shoes",
+        "label_item_fields": ["article", "color", "size"],
+    }
+
+    result = build_label_data(product, profile, "1234567890123")
+    assert result["item_line"] == "р. 38"
+
+
+def test_shoes_layout_reuses_bags_layout(monkeypatch):
+    import src.label_layouts as layouts
+
+    calls = []
+    monkeypatch.setattr(layouts, "render_label_58x40_bags", lambda *args: calls.append("render"))
+    layouts.render_label_58x40_shoes(object(), {})
+    assert calls == ["render"]
