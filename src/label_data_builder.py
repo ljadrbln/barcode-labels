@@ -114,24 +114,18 @@ def build_label_data(
     price_line = build_price_line(product)
     brand_line = build_brand_line(product)
 
-    item_product = product
-
+    article_line = ""
     if profile_config.get("layout") == "label_58x40_bags":
-        item_product = product.copy()
-        item_product["name"] = remove_brand_prefix(
-            product.get("name"),
-            brand_line
-        )
-
-    item_line = build_item_line(
-        item_product,
-        item_fields
-    )
+        article_line = str(product["article"])
+        item_line = str(product["color"] or "")
+    else:
+        item_line = build_item_line(product, item_fields)
 
     result = {
         "store_line": store_name,
         "logo_path": profile_config.get("logo_path"),
         "brand_line": brand_line,
+        "article_line": article_line,
         "item_line": item_line,
         "price_line": price_line,
         "barcode_value": barcode_value,

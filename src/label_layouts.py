@@ -45,7 +45,8 @@ def render_label_58x40_bags(
     draw_vertical_price(pdf, layout, label_data["price_line"])
     draw_bags_logo(pdf, layout, label_data)
     draw_bags_brand(pdf, layout, label_data["brand_line"])
-    draw_item_line(pdf, layout, label_data["item_line"])
+    draw_bags_article(pdf, layout, label_data["article_line"])
+    draw_bags_color(pdf, layout, label_data["item_line"])
     draw_barcode(pdf, layout, label_data["barcode_value"])
 
 
@@ -87,6 +88,20 @@ def draw_bags_brand(pdf, layout, brand_line):
     y = layout["inner_y"] + layout["inner_height"] - (12 * mm)
 
     pdf.drawCentredString(x, y, str(brand_line))
+
+
+def draw_bags_article(pdf, layout, article_line):
+    pdf.setFont(FONT_FAMILY, ITEM_FONT_SIZE)
+    x = layout["right_x"] + layout["right_width"] / 2
+    y = layout["inner_y"] + 18 * mm
+    pdf.drawCentredString(x, y, str(article_line))
+
+
+def draw_bags_color(pdf, layout, color_line):
+    pdf.setFont(FONT_FAMILY, ITEM_FONT_SIZE)
+    x = layout["right_x"] + layout["right_width"] / 2
+    y = layout["inner_y"] + 13 * mm
+    pdf.drawCentredString(x, y, str(color_line))
 
 
 def build_layout():
