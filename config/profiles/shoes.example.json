@@ -1,5 +1,6 @@
 {
     "store_name": "Roga i Kopyta",
+    "logo_path": null,
     "columns": {
         "brand": "Бренд",
         "color": "Цвет",
