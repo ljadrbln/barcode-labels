@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 from reportlab.pdfgen import canvas
 
 from src.label_data_builder import build_label_data
+from src.barcode_generator import validate_ean13_barcode
 from src.label_layouts import LABEL_WIDTH
 from src.label_layouts import LABEL_HEIGHT
 from src.label_layouts import render_label_58x40_vertical_price
@@ -50,7 +51,17 @@ def render_labels_pdf(
 
     for product in products:
         quantity = get_label_quantity(product)
-        barcode_value = barcode_storage.next_barcode()
+        existing_barcode = product.get("barcode")
+
+        if existing_barcode is None or str(existing_barcode).strip() == "":
+            barcode_value = barcode_storage.next_barcode()
+        else:
+            try:
+                barcode_value = validate_ean13_barcode(existing_barcode)
+            except ValueError as error:
+                raise ValueError(
+                    f"Invalid barcode in Excel row {product['_row_index']}: {error}"
+                ) from error
 
         label_data = build_label_data(
             product,

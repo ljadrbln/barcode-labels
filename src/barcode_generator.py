@@ -45,3 +45,26 @@ def generate_ean13_barcode(
     barcode = first_12_digits + checksum
 
     return barcode
+
+
+def validate_ean13_barcode(value):
+    """Return a valid existing EAN-13 as text, or raise ValueError."""
+    if isinstance(value, bool):
+        raise ValueError("EAN-13 must contain exactly 13 digits")
+
+    if isinstance(value, int):
+        barcode = str(value)
+    elif isinstance(value, float) and value.is_integer():
+        barcode = str(int(value))
+    elif isinstance(value, str):
+        barcode = value.strip()
+    else:
+        raise ValueError("EAN-13 must contain exactly 13 digits")
+
+    if len(barcode) != 13 or not barcode.isascii() or not barcode.isdigit():
+        raise ValueError("EAN-13 must contain exactly 13 digits")
+
+    if calculate_ean13_checksum(barcode[:12]) != barcode[12]:
+        raise ValueError("Invalid EAN-13 check digit")
+
+    return barcode
