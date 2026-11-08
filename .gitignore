@@ -16,7 +16,8 @@ ENV/
 htmlcov/
 
 # Runtime data
-data/barcodes.json
+/data/*
+!/data/.gitkeep
 
 # Profiles configuration
 config/profiles/*.json
