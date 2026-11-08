@@ -26,6 +26,21 @@ def build_item_line(product, item_fields):
     return result
 
 
+def remove_brand_prefix(name, brand):
+    name = str(name or "").strip()
+    brand = str(brand or "").strip()
+
+    if not brand or not name.casefold().startswith(brand.casefold()):
+        return name
+
+    remainder = name[len(brand):]
+
+    if remainder and remainder[0] not in " -–—:|,":
+        return name
+
+    return remainder.lstrip(" -–—:|,") or name
+
+
 def format_size(size):
     if not size:
         return ""
@@ -99,14 +114,26 @@ def build_label_data(
     price_line = build_price_line(product)
     brand_line = build_brand_line(product)
 
-    item_line = build_item_line(
-        product,
-        item_fields
-    )
+    article_line = ""
+    layout = profile_config.get("layout")
+
+    if layout in ("label_58x40_bags", "label_58x40_shoes"):
+        article_line = str(product["article"])
+        color = str(product.get("color") or "").strip()
+
+        if layout == "label_58x40_shoes":
+            size = format_size(product.get("size"))
+            item_line = " · ".join(part for part in (color, size) if part)
+        else:
+            item_line = color
+    else:
+        item_line = build_item_line(product, item_fields)
 
     result = {
         "store_line": store_name,
+        "logo_path": profile_config.get("logo_path"),
         "brand_line": brand_line,
+        "article_line": article_line,
         "item_line": item_line,
         "price_line": price_line,
         "barcode_value": barcode_value,

@@ -16,7 +16,8 @@ ENV/
 htmlcov/
 
 # Runtime data
-data/barcodes.json
+/data/*
+!/data/.gitkeep
 
 # Profiles configuration
 config/profiles/*.json
@@ -31,6 +32,9 @@ input/*
 !input/.gitkeep
 !input/demo_products_bags.xlsx
 !input/demo_products_shoes.xlsx
+
+# Private branding
+/assets/logo.png
 
 # Generated documents
 *.pdf

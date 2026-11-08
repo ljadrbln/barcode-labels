@@ -1,15 +1,18 @@
 {
     "store_name": "Roga i Kopyta",
+    "logo_path": null,
     "columns": {
         "brand": "Бренд",
+        "color": "Цвет",
         "article": "Артикул",
         "name": "Название",
         "size": "Размер",
         "price": "Цена",
+        "quantity": "К-во",
         "currency": "Валюта",
         "barcode": "Штрихкод"
     },
     "product_key_fields": ["article", "size"],
-    "label_item_fields": ["article", "name", "size"],
-    "layout": "label_58x40_vertical_price"
+    "label_item_fields": ["article", "color", "size"],
+    "layout": "label_58x40_shoes"
 }

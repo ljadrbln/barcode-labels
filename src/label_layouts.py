@@ -1,5 +1,5 @@
 from reportlab.lib.units import mm
-from reportlab.lib.utils import simpleSplit
+from reportlab.lib.utils import ImageReader, simpleSplit
 from reportlab.graphics.barcode import createBarcodeDrawing
 
 
@@ -33,6 +33,80 @@ def render_label_58x40_vertical_price(
     draw_store_line(pdf, layout, label_data["store_line"])
     draw_item_line(pdf, layout, label_data["item_line"])
     draw_barcode(pdf, layout, label_data["barcode_value"])
+
+
+def render_label_58x40_bags(
+    pdf,
+    label_data
+):
+    layout = build_layout()
+
+    draw_vertical_separator(pdf, layout)
+    draw_vertical_price(pdf, layout, label_data["price_line"])
+    draw_bags_logo(pdf, layout, label_data)
+    draw_bags_brand(pdf, layout, label_data["brand_line"])
+    draw_bags_article(pdf, layout, label_data["article_line"])
+    draw_bags_color(pdf, layout, label_data["item_line"])
+    draw_barcode(pdf, layout, label_data["barcode_value"])
+
+
+def render_label_58x40_shoes(pdf, label_data):
+    # Reuse the same geometry as the bags label.
+    render_label_58x40_bags(pdf, label_data)
+
+
+def draw_bags_logo(pdf, layout, label_data):
+    logo_path = label_data.get("logo_path")
+
+    if not logo_path:
+        draw_store_line(pdf, layout, label_data["store_line"])
+        return
+
+    logo = ImageReader(str(logo_path))
+    image_width, image_height = logo.getSize()
+    max_width = layout["right_width"] - (4 * mm)
+    max_height = 7 * mm
+    scale = min(max_width / image_width, max_height / image_height)
+    width = image_width * scale
+    height = image_height * scale
+
+    x = layout["right_x"] + (layout["right_width"] - width) / 2
+    y = layout["inner_y"] + layout["inner_height"] - height - (1 * mm)
+
+    pdf.drawImage(
+        logo,
+        x,
+        y,
+        width=width,
+        height=height,
+        mask="auto"
+    )
+
+
+def draw_bags_brand(pdf, layout, brand_line):
+    if not brand_line:
+        return
+
+    pdf.setFont(BOLD_FONT_FAMILY, STORE_FONT_SIZE)
+
+    x = layout["right_x"] + layout["right_width"] / 2
+    y = layout["inner_y"] + layout["inner_height"] - (12 * mm)
+
+    pdf.drawCentredString(x, y, str(brand_line))
+
+
+def draw_bags_article(pdf, layout, article_line):
+    pdf.setFont(FONT_FAMILY, ITEM_FONT_SIZE)
+    x = layout["right_x"] + layout["right_width"] / 2
+    y = layout["inner_y"] + 18 * mm
+    pdf.drawCentredString(x, y, str(article_line))
+
+
+def draw_bags_color(pdf, layout, color_line):
+    pdf.setFont(FONT_FAMILY, ITEM_FONT_SIZE)
+    x = layout["right_x"] + layout["right_width"] / 2
+    y = layout["inner_y"] + 13 * mm
+    pdf.drawCentredString(x, y, str(color_line))
 
 
 def build_layout():

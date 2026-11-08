@@ -2,39 +2,34 @@
 
 # Barcode Labels Generator
 
-Generate EAN13 barcodes, printable PDF labels, and XLSX files with a barcode column.
+Generate EAN-13 barcodes, printable PDF labels, and XLSX files with a barcode column.
 
 ## Features
 
-- Deterministic EAN13 barcode generation
-- Same product key always produces the same barcode
-- No persistent barcode storage
-- Profile-based configuration for different product types
-- Configurable Excel column mapping
-- Configurable store name
-- Product brand support
-- Configurable label layouts
-- Excel column validation
-- PDF label rendering
-- XLSX export with barcode column
+- Sequential EAN-13 barcode generation with SQLite storage
+- Reuse of valid EAN-13 barcodes already present in Excel
+- Profile-based processing for shoes and bags
+- Configurable Excel column mappings and label layouts
+- Optional store logo, brand, color, and product size
+- Quantity-based printing (multiple labels per product)
+- Validation of required Excel columns and existing barcodes
+- PDF labels (58 × 40 mm) and XLSX export
 
 ## Setup
 
-Create virtual environment:
+Create a virtual environment:
 
 ```bash
 python3 -m venv venv
 ```
 
-Activate it:
-
-Linux/macOS:
+Activate it on Linux/macOS:
 
 ```bash
 source venv/bin/activate
 ```
 
-Windows:
+Or on Windows:
 
 ```bat
 venv\Scripts\activate
@@ -46,88 +41,45 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-## Input XLSX Format
-
-Example for shoes:
-
-| brand    | article    | name          | size | price | currency |
-| -------- | ---------- | ------------- | ---- | ----- | -------- |
-| Giovanna | 2xx1-BR-37 | Giovanna 2601 | 37   | 199   | USD      |
-
-Example for bags:
-
-| article | name        | price | currency |
-| ------- | ----------- | ----- | -------- |
-| BG-001  | Leather Bag | 149   | USD      |
-
 ## Profiles
 
-The application supports product profiles.
+Two profiles are available: `shoes` and `bags`.
 
-Available demo profiles:
-
-```text
-shoes
-bags
-```
-
-Run with a specific profile:
-
-```bash
-python3 main.py --profile shoes
-```
-
-```bash
-python3 main.py --profile bags
-```
-
-Profile files are stored in:
+Profile configuration is located in `config/profiles/`:
 
 ```text
 config/profiles/
+├── bags.example.json
+├── bags.json           # Optional, local configuration
+├── shoes.example.json
+└── shoes.json          # Optional, local configuration
 ```
 
-Example profile for shoes:
+The application loads `<profile>.json` when it exists; otherwise it falls back to `<profile>.example.json`. The example profiles can be used without creating private configuration files.
+
+Local `bags.json` and `shoes.json` files are excluded from Git. To customize a profile, copy the corresponding example file and edit the copy.
+
+Profiles configure the Excel column names, label layout, store name, and the fields used to identify and display products. The available layout names are:
+
+- `label_58x40_vertical_price`
+- `label_58x40_shoes`
+- `label_58x40_bags`
+
+See `config/profiles/*.example.json` for the actual column mappings and profile settings.
+
+### Optional store logo
+
+A profile can specify an external PNG logo:
 
 ```json
-{
-  "store_name": "Roga i Kopyta",
-  "columns": {
-    "brand": "Brand",
-    "article": "Article",
-    "name": "Name",
-    "size": "Size",
-    "price": "Price",
-    "currency": "Currency",
-    "barcode": "Barcode"
-  },
-  "product_key_fields": ["article", "size"],
-  "label_item_fields": ["article", "name", "size"],
-  "layout": "label_58x40_vertical_price"
-}
+"logo_path": "assets/logo.png"
 ```
 
-Example profile for bags:
+When `logo_path` is `null`, the label uses the configured store name instead. A private `assets/logo.png` can be kept outside Git and copied into the `assets/` directory of a Windows distribution alongside private profile files. No executable rebuild is needed to change these external files.
 
-```json
-{
-  "store_name": "Roga i Kopyta",
-  "columns": {
-    "article": "Article",
-    "name": "Name",
-    "price": "Price",
-    "currency": "Currency",
-    "barcode": "Barcode"
-  },
-  "product_key_fields": ["article"],
-  "label_item_fields": ["article", "name"],
-  "layout": "label_58x40_vertical_price"
-}
-```
+## Input XLSX Format
 
-## Validation
-
-The application validates required Excel columns before processing.
+The first row must contain column headers. Their names are defined by the selected profile's `columns` mapping, so they do not need to match internal names such as `article`, `price`, or `barcode`.
 
 Required columns are determined by:
 
@@ -136,26 +88,43 @@ Required columns are determined by:
 - `price`
 - `currency`
 
-If a required column is missing, the application stops with a clear error message:
+Other mapped columns may be omitted. In particular, an input file does not need a barcode column when generating labels for the first time.
+
+Example validation error:
 
 ```text
 Required column 'price' not found in Excel file
 ```
 
-The following columns are optional:
+### Quantity
 
-- `brand`
-- `barcode`
+If the profile maps a `quantity` field, its Excel value controls how many identical PDF labels are printed for each row:
+
+| Quantity | PDF labels |
+| --- | ---: |
+| Empty or missing | 1 |
+| `0` | 0 |
+| `2` | 2 |
+| `3` | 3 |
+
+Quantity must be a non-negative whole number. Invalid values (such as `-1`, `1.5`, or text) cause an error. A barcode is still assigned to a processed row when its quantity is zero.
 
 ## Run
 
-Default demo:
+Run the default demo:
 
 ```bash
 python3 main.py
 ```
 
-Custom files:
+Select a profile:
+
+```bash
+python3 main.py --profile shoes
+python3 main.py --profile bags
+```
+
+Specify input and output files:
 
 ```bash
 python3 main.py \
@@ -164,15 +133,42 @@ python3 main.py \
     --output output/products_with_barcodes.xlsx
 ```
 
-## Output
-
-Generated files:
+The command produces:
 
 ```text
 output/
 ├── products_with_barcodes.xlsx
-└── products_with_barcodes_labels.pdf
+└── products_with_barcodes.pdf
 ```
+
+The XLSX file contains the assigned barcodes, and the PDF contains the printable labels.
+
+## Barcode Generation and Reprinting
+
+The application uses EAN-13 barcodes with a configurable prefix (default: `29`). New barcodes are generated from an increasing sequence stored in `data/barcodes.sqlite3`.
+
+For each Excel row:
+
+1. If the mapped barcode cell contains a valid EAN-13 value, reuse it.
+2. If the cell is absent or empty, generate a new EAN-13 barcode.
+3. If the cell contains an invalid barcode, stop with an error identifying the Excel row.
+
+Existing values must contain exactly 13 digits and have a valid EAN-13 check digit.
+
+**The database is a sequence allocator, not a product-to-barcode registry.** Reprocessing the same product from an Excel file *without* a barcode creates a new value. To reprint previous labels, use the XLSX generated by an earlier run, or another Excel file containing those same barcodes.
+
+Example:
+
+```bash
+python3 main.py \
+    --profile bags \
+    --input output/bags_with_barcodes.xlsx \
+    --output output/bags_reprinted.xlsx
+```
+
+This preserves the existing barcodes while allowing labels to be rendered again. Changes to price or quantity do not change an existing barcode.
+
+**Keep `data/barcodes.sqlite3` when generating new barcodes.** Removing it resets the sequence and can result in previously issued values being generated again. The database does not need to contain an existing barcode for that value to be reused from Excel.
 
 ## Label Example
 
@@ -188,40 +184,7 @@ Prices are formatted automatically:
 199 + PLN -> 199.00 PLN
 ```
 
-### Supported Currency Labels
-
-```python
-currency_map = {
-    "EUR": "€",
-    "RUB": "₽",
-    "UAH": "грн",
-    "USD": "$",
-}
-```
-
-Unknown currency codes are displayed unchanged.
-
-Example:
-
-```text
-PLN -> PLN
-CHF -> CHF
-```
-
-## Barcode Generation
-
-Barcodes are generated deterministically from the product key.
-
-This means:
-
-- the same product key always produces the same barcode;
-- barcode generation does not depend on previous runs;
-- barcode generation does not depend on existing files;
-- barcode generation does not depend on Excel row order.
-
-The product key is hashed using SHA-256 and converted into a valid EAN13 barcode.
-
-Since an EAN13 barcode contains only 12 payload digits, different product keys can theoretically produce the same barcode. In practice, such collisions are extremely unlikely.
+Currency symbols include EUR (`€`), RUB (`₽`), UAH (`грн`), and USD (`$`). Unknown currency codes are displayed unchanged.
 
 ## Tests
 
@@ -235,14 +198,6 @@ Run tests with coverage:
 
 ```bash
 python -m pytest -p pytest_cov --cov=src --cov-report=term-missing
-```
-
-## Notes
-
-PDF label size:
-
-```text
-58x40 mm
 ```
 
 ## License
