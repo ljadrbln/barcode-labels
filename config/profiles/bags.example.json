@@ -6,6 +6,7 @@
         "article": "Артикул",
         "name": "Название",
         "price": "Цена",
+        "quantity": "К-во",
         "currency": "Валюта",
         "barcode": "Штрихкод"
     },

@@ -1,3 +1,5 @@
+from decimal import Decimal, InvalidOperation
+
 from reportlab.pdfgen import canvas
 
 from src.label_data_builder import build_label_data
@@ -7,6 +9,22 @@ from src.label_layouts import render_label_58x40_vertical_price
 from src.label_layouts import render_label_58x40_bags
 from src.label_layouts import render_label_58x40_shoes
 from src.output_paths import build_pdf_path
+
+
+def get_label_quantity(product):
+    raw = product.get("quantity")
+    if raw is None or raw == "":
+        return 1
+
+    try:
+        quantity = Decimal(str(raw).strip())
+    except InvalidOperation:
+        raise ValueError(f"Invalid quantity: {raw!r}")
+
+    if not quantity.is_finite() or quantity < 0 or quantity != quantity.to_integral_value():
+        raise ValueError(f"Invalid quantity: {raw!r}")
+
+    return int(quantity)
 
 
 def render_labels_pdf(
@@ -31,6 +49,7 @@ def render_labels_pdf(
     barcodes_by_row = {}
 
     for product in products:
+        quantity = get_label_quantity(product)
         barcode_value = barcode_storage.next_barcode()
 
         label_data = build_label_data(
@@ -44,12 +63,12 @@ def render_labels_pdf(
 
         barcodes_by_row[row_index] = barcode_value
 
-        render_label(
-            pdf,
-            label_data
-        )
-
-        pdf.showPage()
+        for _ in range(quantity):
+            render_label(
+                pdf,
+                label_data
+            )
+            pdf.showPage()
 
     pdf.save()
 
